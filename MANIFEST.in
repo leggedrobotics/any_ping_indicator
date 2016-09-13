@@ -1,2 +1,2 @@
-include any_ping_applet/preferences_window.glade
-include any_ping_applet/ping_edit_dialog.glade
+include ui/preferences_window.glade
+include ui/ping_edit_dialog.glade

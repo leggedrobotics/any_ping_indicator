@@ -21,6 +21,7 @@ import os
 from gi.repository import Gtk as gtk
 from gi.repository import Gdk as gdk
 
+from . import resource
 from .ping_object import PingObject
 from .ping_edit_dialog import PingEditDialog
 
@@ -64,7 +65,7 @@ class PreferencesWindow(gtk.Window):
         # gui
         builder = gtk.Builder()
         file_path = os.path.dirname(os.path.abspath(__file__))
-        builder.add_from_file(file_path + '/preferences_window.glade')
+        builder.add_from_file(resource.ui_path("preferences_window"))
         # get main box
         self.box1 = builder.get_object('box1')
         # add main box to window

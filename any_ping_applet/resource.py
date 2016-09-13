@@ -37,3 +37,8 @@ def image_path(name, theme):
 def image_path_type(name, theme):
     """Returns path to the image file by its name, in given theme library"""
     return join(__CURRENT_RESOURCES_PATH, "img", theme, "%s" % name)
+
+
+def ui_path(name):
+    """Returns path to the ui (glade) file by its name."""
+    return join(__CURRENT_RESOURCES_PATH, "ui", "%s.glade" % name)

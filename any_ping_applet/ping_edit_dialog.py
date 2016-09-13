@@ -20,6 +20,8 @@ import os
 
 from gi.repository import Gtk as gtk
 
+from . import resource
+
 
 class PingEditDialog(gtk.Dialog):
     """Edit/add dialog.
@@ -34,7 +36,7 @@ class PingEditDialog(gtk.Dialog):
         # set ui to dialog
         builder = gtk.Builder()
         file_path = os.path.dirname(os.path.abspath(__file__))
-        builder.add_from_file(file_path + '/ping_edit_dialog.glade')
+        builder.add_from_file(resource.ui_path("ping_edit_dialog"))
         self.box1 = builder.get_object('box1')
         self.box = self.get_content_area()
         self.box.add(self.box1)

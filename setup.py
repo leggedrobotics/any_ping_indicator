@@ -35,7 +35,7 @@ def find_resources(resource_dir):
 setup(name="any_ping_indicator",
       version="0.7",
       description="Any Ping Indicator for Ubuntu",
-      url='https://github.com/candidtim/any-ping-indicator',  # TODO
+      url='https://github.com/leggedrobotics/any_ping_indicator',
       author='Samuel Bachmann',
       author_email='samuel.bachmann@gmail.com',
       license='GPL',
@@ -43,7 +43,7 @@ setup(name="any_ping_indicator",
       data_files=[
           ('/usr/share/applications', ['any_ping_applet.desktop']),
           find_resources("img"),
-          find_resources("img")],
+          find_resources("ui")],
       scripts=["bin/any_ping_applet"],
       install_requires=[
           'svgutils'

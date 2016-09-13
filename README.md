@@ -8,7 +8,7 @@
 
 ##Dependencies
 
-- svgutils
+- [svgutils](https://github.com/btel/svg_utils)
 
         sudo apt-get install libxml2-dev libxslt-dev
         

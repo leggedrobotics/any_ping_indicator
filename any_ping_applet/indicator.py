@@ -73,6 +73,7 @@ class AnyPingIndicator(GObject.GObject):
                                                 item.number_of_pings,
                                                 item.show_indicator,
                                                 item.is_activated))
+            count += 1
         # update list of icon tuples
         self.update_list_of_icon_tuples()
         # init windows variables
@@ -116,11 +117,9 @@ class AnyPingIndicator(GObject.GObject):
         :return:
         """
         self.list_of_icon_tuple.clear()
-        count = 0
         for item in self.ping_objects:
-            t = IconTuple(count, item.address, "icon_grey", item.show_indicator)
+            t = IconTuple(item.id, item.address, "icon_grey", item.show_indicator)
             self.list_of_icon_tuple.append(t)
-            count += 1
 
     def update_indicator_icon(self):
         """Update the indicator icon depending on the list of icon tuples.

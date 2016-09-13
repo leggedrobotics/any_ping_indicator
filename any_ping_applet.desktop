@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Any Ping Indicator
+Comment=View state of all pings
+Exec=any_ping_applet
+Icon=/usr/share/any_ping_applet/img/icon.png
+Type=Application
+Terminal=false
+Categories=GNOME;GTK;Utility;

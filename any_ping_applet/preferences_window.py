@@ -29,7 +29,7 @@ from .ping_edit_dialog import PingEditDialog
 class PreferencesWindow(gtk.Window):
     """Preferences class.
     """
-    def __init__(self, icon_path, preferences):
+    def __init__(self, icon_path, preferences, autostart, ping_warning):
         """Initialize.
         :param icon_path:
         :param preferences:
@@ -44,6 +44,8 @@ class PreferencesWindow(gtk.Window):
         #
         self.icon_path = icon_path
         self.preferences = preferences
+        self.autostart = autostart
+        self.ping_warning = ping_warning
         # generate the list
         list_ping_objects = []
         for item in preferences:
@@ -79,6 +81,12 @@ class PreferencesWindow(gtk.Window):
         self.button_edit = builder.get_object("button_edit")
         self.button_up = builder.get_object("button_up")
         self.button_down = builder.get_object("button_down")
+        self.checkbutton_autostart = builder.get_object("checkbutton_autostart")
+        self.spinbutton_ping_warning = \
+            builder.get_object("spinbutton_ping_warning")
+        # set values
+        self.checkbutton_autostart.set_active(self.autostart)
+        self.spinbutton_ping_warning.set_value(self.ping_warning)
         # connect signal to slots
         handlers = {
             "on_button_add_clicked": self.on_button_add_clicked,
@@ -103,13 +111,17 @@ class PreferencesWindow(gtk.Window):
         :param _1:
         :return:
         """
+        self.autostart = self.checkbutton_autostart.get_active()
+        self.ping_warning = self.spinbutton_ping_warning.get_value()
+        # generate new ping objects
         for item in self.preferences:
             item.stop()
-        self.preferences.clear()
+        self.preferences = []
         count = 0
         for item in self.store:
             self.preferences.append(PingObject(count, item[0], item[1], item[2],
                                                item[3], item[4]))
+            self.preferences[count].set_ping_warning(self.ping_warning)
             count += 1
 
     def on_button_add_clicked(self, _):

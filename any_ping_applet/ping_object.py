@@ -41,8 +41,8 @@ PingStruct = namedtuple("PingStruct", "result min max avg loss")
 class PingObject(GObject.GObject):
     """Ping class.
     """
-    def __init__(self, id: int, address: str, update_rate: float,
-                 number_of_pings: int, show_indicator: bool, is_activated=None):
+    def __init__(self, id, address, update_rate, number_of_pings,
+                 show_indicator, is_activated=None):
         """Initialize.
         :param id:
         :param address:
@@ -68,6 +68,7 @@ class PingObject(GObject.GObject):
         self.icon = "icon_red"
         if not self.is_activated:
             self.icon = "icon_grey"
+        self.ping_warning = 50.0
         # indicator menu item
         self.menu_item = gtk.ImageMenuItem("Ping: " + address)
         # result
@@ -93,6 +94,14 @@ class PingObject(GObject.GObject):
     __gsignals__ = {
         'update': (GObject.SIGNAL_RUN_FIRST, None, (int, str, str, bool, ))
     }
+
+    def set_ping_warning(self, ping_warning):
+        """
+        Set new ping warning value.
+        :param ping_warning:
+        :return:
+        """
+        self.ping_warning = ping_warning
 
     def loop(self):
         """Ping loop that runs in a thread.
@@ -184,7 +193,7 @@ class PingObject(GObject.GObject):
         self.image = gtk.Image()
         if self.is_activated:
             if self.result.result == RESULT_OK:
-                if self.result.avg > 50.0:
+                if self.result.avg > self.ping_warning:
                     self.icon = "icon_orange"
                     img_str = resource.image_path(self.icon, theme.THEME)
                 else:

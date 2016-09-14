@@ -43,7 +43,8 @@ setup(name="any_ping_indicator",
       data_files=[
           ('/usr/share/applications', ['any_ping_applet.desktop']),
           find_resources("img"),
-          find_resources("ui")],
+          find_resources("ui"),
+          find_resources("autostart")],
       scripts=["bin/any_ping_applet"],
       install_requires=[
           'svgutils'

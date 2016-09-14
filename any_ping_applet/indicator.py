@@ -17,7 +17,10 @@
 ################################################################################
 
 import copy
+import errno
 import json
+import os
+import shutil
 import signal
 import threading
 
@@ -73,12 +76,15 @@ class AnyPingIndicator(GObject.GObject):
                                                 item.number_of_pings,
                                                 item.show_indicator,
                                                 item.is_activated))
+            self.ping_objects[count].set_ping_warning(config.ping_warning)
             count += 1
         # update list of icon tuples
         self.update_list_of_icon_tuples()
         # init windows variables
         self.preferences_window = None
         self.about_dialog = None
+        # check autostart
+        self.check_autostart()
         # initialize notification
         notify.init(APPINDICATOR_ID)
         # initialize and build indicator menu
@@ -116,7 +122,7 @@ class AnyPingIndicator(GObject.GObject):
         """Update list of icon tuples.
         :return:
         """
-        self.list_of_icon_tuple.clear()
+        self.list_of_icon_tuple = []
         for item in self.ping_objects:
             t = IconTuple(item.id, item.address, "icon_grey", item.show_indicator)
             self.list_of_icon_tuple.append(t)
@@ -195,9 +201,8 @@ class AnyPingIndicator(GObject.GObject):
         self.icon_count += 1
         self.icon_count %= 5
 
-    def update_indicator_icon_slot(self, ping_object: PingObject, id: int,
-                                   address: str, icon: str,
-                                   show_indicator: bool):
+    def update_indicator_icon_slot(self, ping_object, id, address, icon,
+                                   show_indicator):
         """Function to update the indicator icon with new ping object status.
         :param ping_object: Unused, but provided by the signal call. It is not
         thread save to use this object.
@@ -300,6 +305,28 @@ class AnyPingIndicator(GObject.GObject):
         # show menu
         self.menu.show_all()
 
+    def check_autostart(self):
+        """
+        Check if autostart is enabled/disabled.
+        :return:
+        """
+        if config.autostart:
+            if not os.path.isfile(os.path.join(config.autostart_file_path,
+                                               config.autostart_file_name)):
+                try:
+                    os.makedirs(config.autostart_file_path)
+                except OSError as exception:
+                    if exception.errno != errno.EEXIST:
+                        raise
+                shutil.copy(
+                    resource.autostart_desktop_file_path("any_ping_applet"),
+                    config.autostart_file_path)
+        else:
+            if os.path.isfile(os.path.join(config.autostart_file_path,
+                                           config.autostart_file_name)):
+                os.remove(os.path.join(config.autostart_file_path,
+                                       config.autostart_file_name))
+
     def open_preferences(self, _):
         """Open the preferences window.
         :param _:
@@ -309,7 +336,7 @@ class AnyPingIndicator(GObject.GObject):
             return
         self.preferences_window = PreferencesWindow(
             resource.image_path_type("icon.png", theme.THEME),
-            self.ping_objects)
+            self.ping_objects, config.autostart, config.ping_warning)
         self.preferences_window.connect("delete-event", self.close_preferences)
         self.preferences_window.show_all()
 
@@ -333,6 +360,10 @@ class AnyPingIndicator(GObject.GObject):
         :param event:
         :return:
         """
+        # update config
+        self.ping_objects = preference_window.preferences
+        config.autostart = preference_window.autostart
+        config.ping_warning = preference_window.ping_warning
         # close preference window
         self.preferences_window.destroy()
         self.preferences_window = None
@@ -349,6 +380,8 @@ class AnyPingIndicator(GObject.GObject):
         self.mutex.release()
         # start ping threads
         self.start_ping_objects()
+        # check autostart
+        self.check_autostart()
         # store config
         self.store_config()
 
@@ -360,7 +393,6 @@ class AnyPingIndicator(GObject.GObject):
         """
         self.about_dialog.destroy()
         self.about_dialog = None
-
 
     def fetch_joke(self):
         """Get a joke from icndb.com
@@ -396,7 +428,7 @@ class AnyPingIndicator(GObject.GObject):
                                 item.is_activated)
             ping_object_tuples.append(t)
         # assign the list to config and store to file
-        config.ping_object_tuples.clear()
+        config.ping_object_tuples = []
         config.ping_object_tuples = ping_object_tuples
         config.persist()
 

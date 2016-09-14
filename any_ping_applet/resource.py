@@ -42,3 +42,8 @@ def image_path_type(name, theme):
 def ui_path(name):
     """Returns path to the ui (glade) file by its name."""
     return join(__CURRENT_RESOURCES_PATH, "ui", "%s.glade" % name)
+
+
+def autostart_desktop_file_path(name):
+    """Returns path to the autostart desktop file by its name."""
+    return join(__CURRENT_RESOURCES_PATH, "autostart", "%s.desktop" % name)

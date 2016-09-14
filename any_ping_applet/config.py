@@ -22,9 +22,15 @@ import json
 from .ping_containers import PingObjectTuple
 
 __CONFIG_FILE_PATH = os.path.expanduser("~/.any_ping_applet")
+__AUTOSTART_FILE_PATH = os.path.expanduser("~/.config/autostart/")
+__AUTOSTART_FILE_NAME = "any_ping_applet.desktop"
 
+autostart_file_path = __AUTOSTART_FILE_PATH
+autostart_file_name = __AUTOSTART_FILE_NAME
 ping_object_tuples = []
 check_for_updates = True
+autostart = True
+ping_warning = 50.0
 
 
 def __load():
@@ -33,6 +39,8 @@ def __load():
     """
     global ping_object_tuples
     global check_for_updates
+    global autostart
+    global ping_warning
 
     if not os.path.isfile(__CONFIG_FILE_PATH):
         print("no such config file")
@@ -57,6 +65,10 @@ def __load():
         counter += 1
 
     check_for_updates = config_dict.get("check_for_updates", True)
+
+    autostart = config_dict.get("autostart", True)
+
+    ping_warning = config_dict.get("ping_warning", 50.0)
 
     # global objects
     # global check_for_updates
@@ -84,6 +96,8 @@ def persist():
                  "is_activated": ping_object_tuples[i].is_activated}]
         b.append(a)
     b.append(["check_for_updates", check_for_updates])
+    b.append(["autostart", autostart])
+    b.append(["ping_warning", ping_warning])
     # print(b)
     with open(__CONFIG_FILE_PATH, 'w') as config_file:
         json.dump(dict(b), config_file)

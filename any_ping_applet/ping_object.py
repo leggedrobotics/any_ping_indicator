@@ -123,7 +123,8 @@ class PingObject(GObject.GObject):
         time_sleep = rate - elapsed
         if time_sleep > 0.0:
             # interruptable sleeping function
-            self.stop_event.wait(time_sleep)
+            if self.stop_event is not None:
+                self.stop_event.wait(time_sleep)
         self.time_last = time.time()
 
     def stop(self):

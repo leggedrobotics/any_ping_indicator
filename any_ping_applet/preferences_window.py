@@ -200,6 +200,9 @@ class PreferencesWindow(gtk.Window):
         Depending on the selected item.
         :return:
         """
+        if self.selection is None:
+            return
+
         model, tree_iter = self.selection.get_selected()
 
         self.button_up.set_sensitive(True)

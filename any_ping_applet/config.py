@@ -44,7 +44,7 @@ def __load():
 
     if not os.path.isfile(__CONFIG_FILE_PATH):
         print("no such config file")
-        ping_object_tuple = PingObjectTuple("8.8.8.8", 1.0, 1, True, True)
+        ping_object_tuple = PingObjectTuple("8.8.8.8", 1.0, 1, True, True, True)
         ping_object_tuples.append(ping_object_tuple)
         return
 
@@ -56,11 +56,30 @@ def __load():
         # print(config_dict.get(str(counter))["address"])
         # print(type(config_dict.get(str(counter))))
         config = config_dict.get(str(counter))
-        ping_object_tuple = PingObjectTuple(config["address"],
-                                            config["update_rate"],
-                                            config["number_of_pings"],
-                                            config["show_indicator"],
-                                            config["is_activated"])
+        address = "8.8.8.8"
+        if "address" in config:
+            address = config["address"]
+        update_rate = 1.0
+        if "update_rate" in config:
+            update_rate = config["update_rate"]
+        number_of_pings = 1
+        if "number_of_pings" in config:
+            number_of_pings = config["number_of_pings"]
+        show_indicator = True
+        if "show_indicator" in config:
+            show_indicator = config["show_indicator"]
+        is_activated = True
+        if "is_activated" in config:
+            is_activated = config["is_activated"]
+        show_text = True
+        if "show_text" in config:
+            show_text = config["show_text"]
+        ping_object_tuple = PingObjectTuple(address,
+                                            update_rate,
+                                            number_of_pings,
+                                            show_indicator,
+                                            is_activated,
+                                            show_text)
         ping_object_tuples.append(ping_object_tuple)
         counter += 1
 
@@ -93,7 +112,8 @@ def persist():
                  "update_rate": ping_object_tuples[i].update_rate,
                  "number_of_pings": ping_object_tuples[i].number_of_pings,
                  "show_indicator": ping_object_tuples[i].show_indicator,
-                 "is_activated": ping_object_tuples[i].is_activated}]
+                 "is_activated": ping_object_tuples[i].is_activated,
+                 "show_text": ping_object_tuples[i].show_text}]
         b.append(a)
     b.append(["check_for_updates", check_for_updates])
     b.append(["autostart", autostart])

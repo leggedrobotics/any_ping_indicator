@@ -22,9 +22,11 @@ PingObjectTuple = namedtuple("PingObjectTuple", "address "
                                                 "update_rate "
                                                 "number_of_pings "
                                                 "show_indicator "
-                                                "is_activated")
+                                                "is_activated "
+                                                "show_text")
 
 IconTuple = namedtuple("IconTuple", "id "
                                     "address "
                                     "icon "
-                                    "show_indicator")
+                                    "show_indicator "
+                                    "show_text")

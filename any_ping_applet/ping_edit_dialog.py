@@ -49,6 +49,10 @@ class PingEditDialog(gtk.Dialog):
             builder.get_object("spinbutton_number_of_pings")
         self.radiobutton_yes = builder.get_object("radiobutton_yes")
         self.radiobutton_no = builder.get_object("radiobutton_no")
+        self.radiobutton_show_text_yes = \
+            builder.get_object("radiobutton_show_text_yes")
+        self.radiobutton_show_text_no = \
+            builder.get_object("radiobutton_show_text_no")
         self.radiobutton_activate_yes = \
             builder.get_object("radiobutton_activate_yes")
         self.radiobutton_activate_no = \
@@ -63,6 +67,10 @@ class PingEditDialog(gtk.Dialog):
         else:
             self.radiobutton_no.set_active(True)
         if preference[4]:
+            self.radiobutton_show_text_yes.set_active(True)
+        else:
+            self.radiobutton_show_text_no.set_active(True)
+        if preference[5]:
             self.radiobutton_activate_yes.set_active(True)
         else:
             self.radiobutton_activate_no.set_active(True)

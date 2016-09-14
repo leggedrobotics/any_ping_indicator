@@ -75,6 +75,7 @@ class AnyPingIndicator(GObject.GObject):
                                                 item.update_rate,
                                                 item.number_of_pings,
                                                 item.show_indicator,
+                                                item.show_text,
                                                 item.is_activated))
             self.ping_objects[count].set_ping_warning(config.ping_warning)
             count += 1
@@ -124,7 +125,8 @@ class AnyPingIndicator(GObject.GObject):
         """
         self.list_of_icon_tuple = []
         for item in self.ping_objects:
-            t = IconTuple(item.id, item.address, "icon_grey", item.show_indicator)
+            t = IconTuple(item.id, item.address, "icon_grey",
+                          item.show_indicator, item.show_text)
             self.list_of_icon_tuple.append(t)
 
     def update_indicator_icon(self):
@@ -138,7 +140,8 @@ class AnyPingIndicator(GObject.GObject):
         for i in range(0, len(self.list_of_icon_tuple)):
             if self.list_of_icon_tuple[i].show_indicator:
                 count += 1
-                char_count += len(self.list_of_icon_tuple[i].address)
+                if self.list_of_icon_tuple[i].show_text:
+                    char_count += len(self.list_of_icon_tuple[i].address)
         if count == 0:
             # update indicator icon
             GObject.idle_add(
@@ -160,8 +163,10 @@ class AnyPingIndicator(GObject.GObject):
         for i in range(0, len(self.list_of_icon_tuple)):
             if self.list_of_icon_tuple[i].show_indicator:
                 # get the address length
-                txt_length = len(self.list_of_icon_tuple[i].address) * \
-                             character_width
+                txt_length = 0
+                if self.list_of_icon_tuple[i].show_text:
+                    txt_length = len(self.list_of_icon_tuple[i].address) * \
+                                 character_width
                 # load the figure from file
                 fig_1 = sg.fromfile(
                     resource.image_path(self.list_of_icon_tuple[i].icon,
@@ -176,12 +181,13 @@ class AnyPingIndicator(GObject.GObject):
                 # update text position
                 txt_position += disk_width
                 # generate text element
-                txt = sg.TextElement(txt_position, 100,
-                                     self.list_of_icon_tuple[i].address,
-                                     size=90, weight="regular", font="Courier",
-                                     color="white")
-                # add the text to the list
-                texts.append(txt)
+                if self.list_of_icon_tuple[i].show_text:
+                    txt = sg.TextElement(txt_position, 100,
+                                         self.list_of_icon_tuple[i].address,
+                                         size=90, weight="regular", font="Courier",
+                                         color="white")
+                    # add the text to the list
+                    texts.append(txt)
                 # update text position
                 txt_position += txt_length
 
@@ -202,7 +208,7 @@ class AnyPingIndicator(GObject.GObject):
         self.icon_count %= 5
 
     def update_indicator_icon_slot(self, ping_object, id, address, icon,
-                                   show_indicator):
+                                   show_indicator, show_text):
         """Function to update the indicator icon with new ping object status.
         :param ping_object: Unused, but provided by the signal call. It is not
         thread save to use this object.
@@ -210,6 +216,7 @@ class AnyPingIndicator(GObject.GObject):
         :param address: Address of the ping object.
         :param icon: Icon string of the ping object.
         :param show_indicator: Boolean to add/not add the status to the icon.
+        :param show_text:
         :return: None.
         """
         # acquire mutex
@@ -220,7 +227,7 @@ class AnyPingIndicator(GObject.GObject):
         for i in range(0, len(list_of_icon_tuple)):
             if list_of_icon_tuple[i].id == id:
                 list_of_icon_tuple[i] = IconTuple(id, address, icon,
-                                                  show_indicator)
+                                                  show_indicator, show_text)
                 break
         # check if list is different,
         # if not, no update required, release mutex and return
@@ -276,6 +283,14 @@ class AnyPingIndicator(GObject.GObject):
             submenu_item_show_indicator.connect("activate",
                     self.ping_objects[i].on_show_indicator)
             submenu.append(submenu_item_show_indicator)
+            # submenu entry to hide address text from indicator icon
+            submenu_item_show_text = \
+                gtk.CheckMenuItem("Show text",
+                                  active=
+                                  self.ping_objects[i].show_text)
+            submenu_item_show_text.connect("activate",
+                                           self.ping_objects[i].on_show_text)
+            submenu.append(submenu_item_show_text)
             # submenu to activate/deactivate the ping
             submenu_item_activate = \
                 gtk.CheckMenuItem("Activate",
@@ -425,7 +440,8 @@ class AnyPingIndicator(GObject.GObject):
                                 item.update_rate,
                                 item.number_of_pings,
                                 item.show_indicator,
-                                item.is_activated)
+                                item.is_activated,
+                                item.show_text)
             ping_object_tuples.append(t)
         # assign the list to config and store to file
         config.ping_object_tuples = []

@@ -42,7 +42,7 @@ class PingObject(GObject.GObject):
     """Ping class.
     """
     def __init__(self, id, address, update_rate, number_of_pings,
-                 show_indicator, is_activated=None):
+                 show_indicator, show_text, is_activated=None):
         """Initialize.
         :param id:
         :param address:
@@ -61,6 +61,7 @@ class PingObject(GObject.GObject):
         self.update_rate = update_rate
         self.number_of_pings = number_of_pings
         self.show_indicator = show_indicator
+        self.show_text = show_text
         if is_activated is None:
             self.is_activated = True
         else:
@@ -92,7 +93,7 @@ class PingObject(GObject.GObject):
 
     # signal definition returns (id, address, icon name, show_indicator)
     __gsignals__ = {
-        'update': (GObject.SIGNAL_RUN_FIRST, None, (int, str, str, bool, ))
+        'update': (GObject.SIGNAL_RUN_FIRST, None, (int, str, str, bool, bool,))
     }
 
     def set_ping_warning(self, ping_warning):
@@ -228,7 +229,8 @@ class PingObject(GObject.GObject):
         self.emit('update', copy.copy(self.id),
                   copy.copy(self.address),
                   copy.copy(self.icon),
-                  copy.copy(self.show_indicator))
+                  copy.copy(self.show_indicator),
+                  copy.copy(self.show_text))
         # update menu item
         self.update_menu_item()
 
@@ -260,7 +262,20 @@ class PingObject(GObject.GObject):
         self.emit('update', copy.copy(self.id),
                   copy.copy(self.address),
                   copy.copy(self.icon),
-                  copy.copy(self.show_indicator))
+                  copy.copy(self.show_indicator),
+                  copy.copy(self.show_text))
+
+    def on_show_text(self, item):
+        """Emit signal to update indicator icon.
+        :param item:
+        :return:
+        """
+        self.show_text = item.get_active()
+        self.emit('update', copy.copy(self.id),
+                  copy.copy(self.address),
+                  copy.copy(self.icon),
+                  copy.copy(self.show_indicator),
+                  copy.copy(self.show_text))
 
     def on_activate(self, item):
         """Update menu item and emit signal to update indicator icon.
@@ -285,7 +300,8 @@ class PingObject(GObject.GObject):
         self.emit('update', copy.copy(self.id),
                   copy.copy(self.address),
                   copy.copy(self.icon),
-                  copy.copy(self.show_indicator))
+                  copy.copy(self.show_indicator),
+                  copy.copy(self.show_text))
 
         if self.is_activated:
             self.start()

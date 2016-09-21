@@ -44,7 +44,8 @@ def __load():
 
     if not os.path.isfile(__CONFIG_FILE_PATH):
         print("no such config file")
-        ping_object_tuple = PingObjectTuple("8.8.8.8", 1.0, 1, True, True, True)
+        ping_object_tuple = PingObjectTuple("", "8.8.8.8", 1.0, 1, True, True,
+                                            True)
         ping_object_tuples.append(ping_object_tuple)
         return
 
@@ -56,6 +57,9 @@ def __load():
         # print(config_dict.get(str(counter))["address"])
         # print(type(config_dict.get(str(counter))))
         config = config_dict.get(str(counter))
+        name = ""
+        if "name" in config:
+            name = config["name"]
         address = "8.8.8.8"
         if "address" in config:
             address = config["address"]
@@ -74,7 +78,8 @@ def __load():
         show_text = True
         if "show_text" in config:
             show_text = config["show_text"]
-        ping_object_tuple = PingObjectTuple(address,
+        ping_object_tuple = PingObjectTuple(name,
+                                            address,
                                             update_rate,
                                             number_of_pings,
                                             show_indicator,
@@ -108,7 +113,8 @@ def persist():
     """
     b = []
     for i in range(0, len(ping_object_tuples)):
-        a = [i, {"address": ping_object_tuples[i].address,
+        a = [i, {"name": ping_object_tuples[i].name,
+                 "address": ping_object_tuples[i].address,
                  "update_rate": ping_object_tuples[i].update_rate,
                  "number_of_pings": ping_object_tuples[i].number_of_pings,
                  "show_indicator": ping_object_tuples[i].show_indicator,

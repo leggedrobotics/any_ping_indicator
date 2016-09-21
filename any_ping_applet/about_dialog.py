@@ -28,7 +28,7 @@ class AboutDialog(gtk.AboutDialog):
         b = GdkPixbuf.Pixbuf.new_from_file_at_scale(icon_path, 100, 100, True)
         self.set_logo(b)
         self.set_license_type(gtk.License.BSD)
-        self.set_copyright("@ ETH RSL 2016")
+        self.set_copyright("COPYRIGHT @ ETH RSL 2016")
         self.set_authors(["Samuel Bachmann <samuel.bachmann@gmail.com>"])
         self.set_program_name("Any Ping")
         self.set_version("v0.7")

@@ -18,7 +18,8 @@
 
 from collections import namedtuple
 
-PingObjectTuple = namedtuple("PingObjectTuple", "address "
+PingObjectTuple = namedtuple("PingObjectTuple", "name "
+                                                "address "
                                                 "update_rate "
                                                 "number_of_pings "
                                                 "show_indicator "
@@ -26,7 +27,7 @@ PingObjectTuple = namedtuple("PingObjectTuple", "address "
                                                 "show_text")
 
 IconTuple = namedtuple("IconTuple", "id "
-                                    "address "
+                                    "name "
                                     "icon "
                                     "show_indicator "
                                     "show_text")

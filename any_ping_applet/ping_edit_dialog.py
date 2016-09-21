@@ -42,6 +42,7 @@ class PingEditDialog(gtk.Dialog):
         self.box.add(self.box1)
 
         # get ui elements
+        self.entry_name = builder.get_object("entry_name")
         self.entry_address = builder.get_object("entry_address")
         self.spinbutton_update_rate = \
             builder.get_object("spinbutton_update_rate")
@@ -59,18 +60,19 @@ class PingEditDialog(gtk.Dialog):
             builder.get_object("radiobutton_activate_no")
 
         # set data
-        self.entry_address.set_text(preference[0])
-        self.spinbutton_update_rate.set_value(preference[1])
-        self.spinbutton_number_of_pings.set_value(preference[2])
-        if preference[3]:
+        self.entry_name.set_text(preference[0])
+        self.entry_address.set_text(preference[1])
+        self.spinbutton_update_rate.set_value(preference[2])
+        self.spinbutton_number_of_pings.set_value(preference[3])
+        if preference[4]:
             self.radiobutton_yes.set_active(True)
         else:
             self.radiobutton_no.set_active(True)
-        if preference[4]:
+        if preference[5]:
             self.radiobutton_show_text_yes.set_active(True)
         else:
             self.radiobutton_show_text_no.set_active(True)
-        if preference[5]:
+        if preference[6]:
             self.radiobutton_activate_yes.set_active(True)
         else:
             self.radiobutton_activate_no.set_active(True)

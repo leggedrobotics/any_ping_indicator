@@ -49,18 +49,19 @@ class PreferencesWindow(gtk.Window):
         # generate the list
         list_ping_objects = []
         for item in preferences:
-            t = (item.address, item.update_rate, item.number_of_pings,
-                 item.show_indicator, item.show_text, item.is_activated)
+            t = (item.name, item.address, item.update_rate,
+                 item.number_of_pings, item.show_indicator, item.show_text,
+                 item.is_activated)
             list_ping_objects.append(t)
         # initialize the list store
-        self.store = gtk.ListStore(str, float, int, bool, bool, bool)
+        self.store = gtk.ListStore(str, str, float, int, bool, bool, bool)
         for ref in list_ping_objects:
             self.store.append(list(ref))
         # initialize the tree view
         self.tree_view = gtk.TreeView.new_with_model(self.store)
         for i, column_title in enumerate(
-                ["Address", "Update Rate", "Number of Pings", "Show Indicator",
-                 "Show Text", "Activate"]):
+                ["Name", "Address", "Update Rate", "Number of Pings",
+                 "Show Indicator", "Show Text", "Activate"]):
             renderer = gtk.CellRendererText()
             column = gtk.TreeViewColumn(column_title, renderer, text=i)
             self.tree_view.append_column(column)
@@ -125,7 +126,8 @@ class PreferencesWindow(gtk.Window):
         count = 0
         for item in self.store:
             self.preferences.append(PingObject(count, item[0], item[1], item[2],
-                                               item[3], item[4], item[5]))
+                                               item[3], item[4], item[5],
+                                               item[6]))
             self.preferences[count].set_ping_warning(self.ping_warning)
             count += 1
 
@@ -134,7 +136,7 @@ class PreferencesWindow(gtk.Window):
         :param _:
         :return:
         """
-        self.add_edit_ping(("", 1.0, 1, True, True, True), True)
+        self.add_edit_ping(("", "", 1.0, 1, True, True, True), True)
 
     def on_button_remove_clicked(self, _):
         """Called on remove button clicked. Remove the selected item from the
@@ -156,7 +158,8 @@ class PreferencesWindow(gtk.Window):
             return
         model, tree_iter = self.selection.get_selected()
         t = (model[tree_iter][0], model[tree_iter][1], model[tree_iter][2],
-             model[tree_iter][3], model[tree_iter][4], model[tree_iter][5])
+             model[tree_iter][3], model[tree_iter][4], model[tree_iter][5],
+             model[tree_iter][6])
         self.add_edit_ping(t, False)
 
     def on_button_up_clicked(self, _):
@@ -232,6 +235,7 @@ class PreferencesWindow(gtk.Window):
         response = dialog.run()
 
         if response == gtk.ResponseType.OK:
+            name = dialog.entry_name.get_text()
             address = dialog.entry_address.get_text()
             update_rate = dialog.spinbutton_update_rate.get_value()
             number_of_pins = dialog.spinbutton_number_of_pings.get_value()
@@ -240,20 +244,21 @@ class PreferencesWindow(gtk.Window):
             is_activated = dialog.radiobutton_activate_yes.get_active()
             if is_adding:
                 if address is not "":
-                    t = (address, update_rate, number_of_pins, show_indicator,
-                         show_text, is_activated)
+                    t = (name, address, update_rate, number_of_pins,
+                         show_indicator, show_text, is_activated)
                     self.store.append(t)
             else:
                 model, tree_iter = self.selection.get_selected()
-                model[tree_iter][0] = dialog.entry_address.get_text()
-                model[tree_iter][1] = \
-                    dialog.spinbutton_update_rate.get_value()
+                model[tree_iter][0] = dialog.entry_name.get_text()
+                model[tree_iter][1] = dialog.entry_address.get_text()
                 model[tree_iter][2] = \
+                    dialog.spinbutton_update_rate.get_value()
+                model[tree_iter][3] = \
                     dialog.spinbutton_number_of_pings.get_value()
-                model[tree_iter][3] = dialog.radiobutton_yes.get_active()
-                model[tree_iter][4] = \
-                    dialog.radiobutton_show_text_yes.get_active()
+                model[tree_iter][4] = dialog.radiobutton_yes.get_active()
                 model[tree_iter][5] = \
+                    dialog.radiobutton_show_text_yes.get_active()
+                model[tree_iter][6] = \
                     dialog.radiobutton_activate_yes.get_active()
         elif response == gtk.ResponseType.CANCEL:
             print("cancel")

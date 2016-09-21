@@ -71,6 +71,7 @@ class AnyPingIndicator(GObject.GObject):
         count = 0
         for item in self.ping_objects_tuple:
             self.ping_objects.append(PingObject(count,
+                                                item.name,
                                                 item.address,
                                                 item.update_rate,
                                                 item.number_of_pings,
@@ -125,7 +126,7 @@ class AnyPingIndicator(GObject.GObject):
         """
         self.list_of_icon_tuple = []
         for item in self.ping_objects:
-            t = IconTuple(item.id, item.address, "icon_grey",
+            t = IconTuple(item.id, item.name, "icon_grey",
                           item.show_indicator, item.show_text)
             self.list_of_icon_tuple.append(t)
 
@@ -141,7 +142,7 @@ class AnyPingIndicator(GObject.GObject):
             if self.list_of_icon_tuple[i].show_indicator:
                 count += 1
                 if self.list_of_icon_tuple[i].show_text:
-                    char_count += len(self.list_of_icon_tuple[i].address)
+                    char_count += len(self.list_of_icon_tuple[i].name)
         if count == 0:
             # update indicator icon
             GObject.idle_add(
@@ -162,10 +163,10 @@ class AnyPingIndicator(GObject.GObject):
         disk_position = 0
         for i in range(0, len(self.list_of_icon_tuple)):
             if self.list_of_icon_tuple[i].show_indicator:
-                # get the address length
+                # get the name length
                 txt_length = 0
                 if self.list_of_icon_tuple[i].show_text:
-                    txt_length = len(self.list_of_icon_tuple[i].address) * \
+                    txt_length = len(self.list_of_icon_tuple[i].name) * \
                                  character_width
                 # load the figure from file
                 fig_1 = sg.fromfile(
@@ -183,7 +184,7 @@ class AnyPingIndicator(GObject.GObject):
                 # generate text element
                 if self.list_of_icon_tuple[i].show_text:
                     txt = sg.TextElement(txt_position, 100,
-                                         self.list_of_icon_tuple[i].address,
+                                         self.list_of_icon_tuple[i].name,
                                          size=90, weight="regular", font="Courier",
                                          color="white")
                     # add the text to the list
@@ -207,13 +208,13 @@ class AnyPingIndicator(GObject.GObject):
         self.icon_count += 1
         self.icon_count %= 5
 
-    def update_indicator_icon_slot(self, ping_object, id, address, icon,
+    def update_indicator_icon_slot(self, ping_object, id, name, icon,
                                    show_indicator, show_text):
         """Function to update the indicator icon with new ping object status.
         :param ping_object: Unused, but provided by the signal call. It is not
         thread save to use this object.
         :param id: ID of the ping object.
-        :param address: Address of the ping object.
+        :param name: Name of the ping object.
         :param icon: Icon string of the ping object.
         :param show_indicator: Boolean to add/not add the status to the icon.
         :param show_text:
@@ -226,7 +227,7 @@ class AnyPingIndicator(GObject.GObject):
         # update the list entry that is matching the id
         for i in range(0, len(list_of_icon_tuple)):
             if list_of_icon_tuple[i].id == id:
-                list_of_icon_tuple[i] = IconTuple(id, address, icon,
+                list_of_icon_tuple[i] = IconTuple(id, name, icon,
                                                   show_indicator, show_text)
                 break
         # check if list is different,
@@ -282,6 +283,7 @@ class AnyPingIndicator(GObject.GObject):
                                   self.ping_objects[i].show_indicator)
             submenu_item_show_indicator.connect("activate",
                     self.ping_objects[i].on_show_indicator)
+            submenu_item_show_indicator.connect("activate", self.update_config)
             submenu.append(submenu_item_show_indicator)
             # submenu entry to hide address text from indicator icon
             submenu_item_show_text = \
@@ -290,6 +292,7 @@ class AnyPingIndicator(GObject.GObject):
                                   self.ping_objects[i].show_text)
             submenu_item_show_text.connect("activate",
                                            self.ping_objects[i].on_show_text)
+            submenu_item_show_text.connect("activate", self.update_config)
             submenu.append(submenu_item_show_text)
             # submenu to activate/deactivate the ping
             submenu_item_activate = \
@@ -298,6 +301,7 @@ class AnyPingIndicator(GObject.GObject):
                                   self.ping_objects[i].is_activated)
             submenu_item_activate.connect("activate",
                                           self.ping_objects[i].on_activate)
+            submenu_item_activate.connect("activate", self.update_config)
             submenu.append(submenu_item_activate)
             # add submenu to ping entry
             item.menu_item.set_submenu(submenu)
@@ -429,6 +433,9 @@ class AnyPingIndicator(GObject.GObject):
                                 resource.image_path_type("chuck_norris_2.jpg",
                                                          theme.THEME)).show()
 
+    def update_config(self, _):
+        self.store_config()
+
     def store_config(self):
         """Store the current configuration.
         :return:
@@ -436,7 +443,8 @@ class AnyPingIndicator(GObject.GObject):
         # create a new list from the ping object list
         ping_object_tuples = []
         for item in self.ping_objects:
-            t = PingObjectTuple(item.address,
+            t = PingObjectTuple(item.name,
+                                item.address,
                                 item.update_rate,
                                 item.number_of_pings,
                                 item.show_indicator,

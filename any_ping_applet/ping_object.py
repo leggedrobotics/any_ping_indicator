@@ -41,7 +41,7 @@ PingStruct = namedtuple("PingStruct", "result min max avg loss")
 class PingObject(GObject.GObject):
     """Ping class.
     """
-    def __init__(self, id, address, update_rate, number_of_pings,
+    def __init__(self, id, name, address, update_rate, number_of_pings,
                  show_indicator, show_text, is_activated=None):
         """Initialize.
         :param id:
@@ -57,6 +57,9 @@ class PingObject(GObject.GObject):
         GObject.threads_init()
         # ping object properties
         self.id = id
+        self.name = name
+        if not self.name:
+            self.name = address
         self.address = address
         self.update_rate = update_rate
         self.number_of_pings = number_of_pings
@@ -91,7 +94,7 @@ class PingObject(GObject.GObject):
         # current time
         self.time_last = time.time()
 
-    # signal definition returns (id, address, icon name, show_indicator)
+    # signal definition returns (id, name, icon name, show_indicator)
     __gsignals__ = {
         'update': (GObject.SIGNAL_RUN_FIRST, None, (int, str, str, bool, bool,))
     }
@@ -227,7 +230,7 @@ class PingObject(GObject.GObject):
             self.state = " inactive."
         # emit signal to update indicator icon
         self.emit('update', copy.copy(self.id),
-                  copy.copy(self.address),
+                  copy.copy(self.name),
                   copy.copy(self.icon),
                   copy.copy(self.show_indicator),
                   copy.copy(self.show_text))
@@ -240,7 +243,7 @@ class PingObject(GObject.GObject):
         """
         GObject.idle_add(
             self.menu_item.set_label,
-            "Ping: " + self.address + self.state,
+            "Ping: " + self.address + self.print_name() + self.state,
             priority=GObject.PRIORITY_HIGH
         )
         GObject.idle_add(
@@ -260,7 +263,7 @@ class PingObject(GObject.GObject):
         """
         self.show_indicator = item.get_active()
         self.emit('update', copy.copy(self.id),
-                  copy.copy(self.address),
+                  copy.copy(self.name),
                   copy.copy(self.icon),
                   copy.copy(self.show_indicator),
                   copy.copy(self.show_text))
@@ -272,7 +275,7 @@ class PingObject(GObject.GObject):
         """
         self.show_text = item.get_active()
         self.emit('update', copy.copy(self.id),
-                  copy.copy(self.address),
+                  copy.copy(self.name),
                   copy.copy(self.icon),
                   copy.copy(self.show_indicator),
                   copy.copy(self.show_text))
@@ -298,10 +301,16 @@ class PingObject(GObject.GObject):
         self.update_menu_item()
 
         self.emit('update', copy.copy(self.id),
-                  copy.copy(self.address),
+                  copy.copy(self.name),
                   copy.copy(self.icon),
                   copy.copy(self.show_indicator),
                   copy.copy(self.show_text))
 
         if self.is_activated:
             self.start()
+
+    def print_name(self):
+        if self.name != self.address:
+            return " (" + self.name + ")"
+        else:
+            return ""

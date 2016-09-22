@@ -33,7 +33,7 @@ def find_resources(resource_dir):
 
 
 setup(name="any_ping_indicator",
-      version="0.7",
+      version="0.8",
       description="Any Ping Indicator for Ubuntu",
       url='https://github.com/leggedrobotics/any_ping_indicator',
       author='Samuel Bachmann',

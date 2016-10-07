@@ -417,8 +417,7 @@ class AnyPingIndicator(GObject.GObject):
         """Get a joke from icndb.com
         :return:
         """
-        request = Request('http://api.icndb.com/jokes/random?limitTo=[nerdy]'
-                          '&firstName=&lastName=Remo')
+        request = Request('http://api.icndb.com/jokes/random?limitTo=[nerdy]')
         response = urlopen(request)
         raw_response = response.read()
         joke = json.loads(raw_response.decode())['value']['joke']

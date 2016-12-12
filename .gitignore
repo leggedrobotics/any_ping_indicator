@@ -1,4 +1,6 @@
 *.pyc
 *.idea
-
+.venv
+.venv3
+MANIFEST
 

@@ -10,9 +10,9 @@
 
 - [svgutils](https://github.com/btel/svg_utils)
 
-        sudo apt-get install libxml2-dev libxslt-dev
+        sudo apt-get install libxml2-dev libxslt-dev python-virtualenv
         
-        pip install git+https://github.com/btel/svg_utils.git
+        sudo pip install git+https://github.com/btel/svg_utils.git
 
 ##Install
 

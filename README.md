@@ -1,4 +1,4 @@
-#Any Ping Indicator
+# Any Ping Indicator
 
 **Author: Samuel Bachmann**
 
@@ -6,7 +6,7 @@
 
 ![Any Ping Preferences](img/any_ping_preferences.png)
 
-##Dependencies
+## Dependencies
 
 - [svgutils](https://github.com/btel/svg_utils)
 
@@ -14,14 +14,14 @@
         
         sudo pip install git+https://github.com/btel/svg_utils.git
 
-##Install
+## Install
 
 ```
 make
 sudo make install
 ```
 
-###Uninstall
+## #Uninstall
 
 ```
 sudo make uninstall

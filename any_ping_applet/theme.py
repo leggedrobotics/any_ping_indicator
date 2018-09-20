@@ -49,7 +49,7 @@ def _get_theme():
     # getting color of a pixel on a top bar,
     # and identifying best-fitting color theme based on its luminance
     pixel_rgb = __pixel_at(2, 2)
-    luminance = _luminance(*pixel_rgb)
+    luminance = _luminance(*pixel_rgb[:3])
     return THEME_LIGHT if luminance >= 0.5 else THEME_DARK
 
 
